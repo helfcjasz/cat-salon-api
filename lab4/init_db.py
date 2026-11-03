@@ -1,12 +1,12 @@
 from datetime import date, timedelta
 from pathlib import Path
- 
+
 import psycopg
- 
+
 from lab4.db import get_connection
- 
+
 SCHEMA_FILE = Path(__file__).with_name("schema.sql")
- 
+
 OWNERS = [
     ("Олена Коваленко", "olena.kovalenko@example.com", "+380501110001"),
     ("Андрій Мельник", "andrii.melnyk@example.com", "+380501110002"),
@@ -19,14 +19,14 @@ OWNERS = [
     ("Соломія Гриценко", "solomiia.hrytsenko@example.com", "+380501110009"),
     ("Юрій Савчук", "yurii.savchuk@example.com", "+380501110010"),
 ]
- 
+
 GROOMERS = [
     ("Віктор Петренко", "+380672220001"),
     ("Оксана Мороз", "+380672220002"),
     ("Дмитро Руденко", "+380672220003"),
     ("Катерина Литвин", "+380672220004"),
 ]
- 
+
 SERVICES = [
     ("Гігієнічна стрижка", 600, 60),
     ("Повне миття та сушіння", 450, 50),
@@ -37,15 +37,15 @@ SERVICES = [
     ("Грумінг мейнкуна (повний)", 900, 120),
     ("SPA-догляд за шерстю", 700, 75),
 ]
- 
+
 CAT_NAMES = [
     "Барсик", "Мурка", "Симба", "Багіра", "Леопольд",
     "Ліза", "Том", "Рижик", "Боніфацій", "Маркіза",
     "Філя", "Цезар", "Сніжинка", "Гектор", "Мотя",
     "Персик", "Тигран", "Ківі", "Оскар", "Зефір",
 ]  # fmt: skip
- 
- 
+
+
 def seed(conn: psycopg.Connection) -> None:
     """Вставляє тестові дані, якщо таблиці порожні."""
     with conn.cursor() as cur:
@@ -54,7 +54,7 @@ def seed(conn: psycopg.Connection) -> None:
         if row is not None and row[0] > 0:
             print("Дані вже є, пропускаю вставку.")
             return
- 
+
         cur.executemany(
             "INSERT INTO owners (full_name, email, phone) VALUES (%s, %s, %s)",
             OWNERS,
@@ -67,7 +67,7 @@ def seed(conn: psycopg.Connection) -> None:
             "INSERT INTO services (title, price, duration_min) VALUES (%s, %s, %s)",
             SERVICES,
         )
- 
+
         cats = [
             (
                 i // 2 + 1,
@@ -83,7 +83,7 @@ def seed(conn: psycopg.Connection) -> None:
             "VALUES (%s, %s, %s, %s, %s)",
             cats,
         )
- 
+
         visits = [
             (
                 (v - 1) % 20 + 1,
@@ -98,7 +98,7 @@ def seed(conn: psycopg.Connection) -> None:
             "VALUES (%s, %s, %s, %s)",
             visits,
         )
- 
+
         visit_services = sorted(
             {(v, s) for v in range(1, 26) for s in (v % 8 + 1, (3 * v) % 8 + 1)}
         )
@@ -106,8 +106,8 @@ def seed(conn: psycopg.Connection) -> None:
             "INSERT INTO visit_services (visit_id, service_id) VALUES (%s, %s)",
             visit_services,
         )
- 
- 
+
+
 def main() -> None:
     with get_connection() as conn:
         conn.execute(SCHEMA_FILE.read_text(encoding="utf-8"))
@@ -125,8 +125,7 @@ def main() -> None:
         print(f"{table}: {count}")
         total += count
     print(f"Усього записів: {total}")
- 
- 
+
+
 if __name__ == "__main__":
     main()
- 
