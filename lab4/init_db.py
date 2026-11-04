@@ -1,3 +1,4 @@
+import argparse
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -7,115 +8,125 @@ from lab4.db import get_connection
 
 SCHEMA_FILE = Path(__file__).with_name("schema.sql")
 
-OWNERS = [
-    ("Олена Коваленко", "olena.kovalenko@example.com", "+380501110001"),
-    ("Андрій Мельник", "andrii.melnyk@example.com", "+380501110002"),
-    ("Ірина Шевченко", "iryna.shevchenko@example.com", "+380501110003"),
-    ("Тарас Бондаренко", "taras.bondarenko@example.com", "+380501110004"),
-    ("Марія Ткаченко", "maria.tkachenko@example.com", "+380501110005"),
-    ("Остап Кравченко", "ostap.kravchenko@example.com", "+380501110006"),
-    ("Наталія Олійник", "natalia.oliinyk@example.com", "+380501110007"),
-    ("Богдан Лисенко", "bohdan.lysenko@example.com", "+380501110008"),
-    ("Соломія Гриценко", "solomiia.hrytsenko@example.com", "+380501110009"),
-    ("Юрій Савчук", "yurii.savchuk@example.com", "+380501110010"),
-]
+RESET_SQL = (
+    "DROP TABLE IF EXISTS visit_services, visits, cats, "
+    "groomers, owners, services CASCADE"
+)
 
-GROOMERS = [
-    ("Віктор Петренко", "+380672220001"),
-    ("Оксана Мороз", "+380672220002"),
-    ("Дмитро Руденко", "+380672220003"),
-    ("Катерина Литвин", "+380672220004"),
-]
 
 SERVICES = [
+    ("Купання та сушіння", 450, 50),
+    ("Вичісування", 350, 40),
     ("Гігієнічна стрижка", 600, 60),
-    ("Повне миття та сушіння", 450, 50),
-    ("Вичісування шерсті", 350, 40),
-    ("Стрижка кігтів", 150, 15),
-    ("Чистка вух", 120, 15),
+    ("Догляд за кігтиками та вушками", 250, 30),
     ("Видалення ковтунів", 400, 45),
-    ("Грумінг мейнкуна (повний)", 900, 120),
     ("SPA-догляд за шерстю", 700, 75),
 ]
 
-CAT_NAMES = [
-    "Барсик", "Мурка", "Симба", "Багіра", "Леопольд",
-    "Ліза", "Том", "Рижик", "Боніфацій", "Маркіза",
-    "Філя", "Цезар", "Сніжинка", "Гектор", "Мотя",
-    "Персик", "Тигран", "Ківі", "Оскар", "Зефір",
-]  # fmt: skip
+CATS = [
+    ("Ніка", "сіамська кішка", 5.5),
+    ("Мія", "метис", 3.4),
+    ("Люся", "сибірська", 3.1),
+    ("Йосип", "метис", 5.2),
+    ("Марсік", "британський короткошерстий", 4.8),
+    ("Барсик", "мейнкун", 7.8),
+    ("Симба", "мейнкун", 8.4),
+    ("Багіра", "мейнкун", 6.2),
+    ("Леопольд", "мейнкун", 9.1),
+    ("Рижик", "мейнкун", 7.0),
+    ("Боніфацій", "мейнкун", 8.8),
+    ("Маркіза", "мейнкун", 5.9),
+    ("Цезар", "мейнкун", 9.4),
+    ("Гектор", "мейнкун", 8.1),
+    ("Зефір", "мейнкун", 6.6),
+]
+
+
+def build_visits() -> list[tuple[int, date, float, bool, list[str]]]:
+
+    titles = [title for title, _, _ in SERVICES]
+    visits = [
+        # Перші п'ять візитів із server.js сайту.
+        (1, date(2026, 11, 6), 5.5, False, ["Вичісування"]),
+        (2, date(2026, 11, 3), 3.4, True, ["Купання та сушіння"]),
+        (3, date(2026, 11, 1), 3.1, True, ["Вичісування"]),
+        (4, date(2026, 11, 5), 5.2, True, ["Догляд за кігтиками та вушками"]),
+        (5, date(2026, 11, 20), 4.8, True, ["Гігієнічна стрижка"]),
+    ]
+    for number in range(6, 26):
+        cat_index = (number - 1) % len(CATS)
+        chosen = list(dict.fromkeys([titles[number % 6], titles[(number * 5) % 6]]))
+        visits.append(
+            (
+                cat_index + 1,
+                date(2026, 10, 1) + timedelta(days=3 * number),
+                CATS[cat_index][2],
+                number % 3 != 0,
+                chosen,
+            )
+        )
+    return visits
+
+
+def _insert(cur: psycopg.Cursor, sql: str, params: tuple) -> int:
+    row = cur.execute(sql, params).fetchone()
+    assert row is not None
+    return int(row[0])
 
 
 def seed(conn: psycopg.Connection) -> None:
-    """Вставляє тестові дані, якщо таблиці порожні."""
+
     with conn.cursor() as cur:
-        cur.execute("SELECT count(*) FROM owners")
-        row = cur.fetchone()
+        row = cur.execute("SELECT count(*) FROM visits").fetchone()
         if row is not None and row[0] > 0:
             print("Дані вже є, пропускаю вставку.")
             return
 
-        cur.executemany(
-            "INSERT INTO owners (full_name, email, phone) VALUES (%s, %s, %s)",
-            OWNERS,
-        )
-        cur.executemany(
-            "INSERT INTO groomers (full_name, phone) VALUES (%s, %s)",
-            GROOMERS,
-        )
-        cur.executemany(
-            "INSERT INTO services (title, price, duration_min) VALUES (%s, %s, %s)",
-            SERVICES,
-        )
-
-        cats = [
-            (
-                i // 2 + 1,
-                name,
-                "Британська короткошерста" if i % 5 == 4 else "Мейнкун",
-                date(2018 + i % 7, 1 + i % 12, 1 + (i * 3) % 28),
-                round(4.0 + (i % 10) * 0.6, 1),
+        service_ids = {
+            title: _insert(
+                cur,
+                "INSERT INTO services (title, price, duration_min) "
+                "VALUES (%s, %s, %s) RETURNING id",
+                (title, price, minutes),
             )
-            for i, name in enumerate(CAT_NAMES)
-        ]
-        cur.executemany(
-            "INSERT INTO cats (owner_id, name, breed, birth_date, weight) "
-            "VALUES (%s, %s, %s, %s, %s)",
-            cats,
-        )
-
-        visits = [
-            (
-                (v - 1) % 20 + 1,
-                (v - 1) % 4 + 1,
-                date(2026, 9, 1) + timedelta(days=3 * v),
-                "done" if v <= 18 else "planned" if v <= 22 else "cancelled",
+            for title, price, minutes in SERVICES
+        }
+        cat_ids = [
+            _insert(
+                cur,
+                "INSERT INTO cats (name, breed) VALUES (%s, %s) RETURNING id",
+                (name, breed),
             )
-            for v in range(1, 26)
+            for name, breed, _ in CATS
         ]
-        cur.executemany(
-            "INSERT INTO visits (cat_id, groomer_id, visit_date, status) "
-            "VALUES (%s, %s, %s, %s)",
-            visits,
-        )
-
-        visit_services = sorted(
-            {(v, s) for v in range(1, 26) for s in (v % 8 + 1, (3 * v) % 8 + 1)}
-        )
-        cur.executemany(
-            "INSERT INTO visit_services (visit_id, service_id) VALUES (%s, %s)",
-            visit_services,
-        )
+        for cat_number, visit_date, weight, confirmed, titles in build_visits():
+            visit_id = _insert(
+                cur,
+                "INSERT INTO visits (cat_id, visit_date, cat_weight, confirmed) "
+                "VALUES (%s, %s, %s, %s) RETURNING id",
+                (cat_ids[cat_number - 1], visit_date, weight, confirmed),
+            )
+            cur.executemany(
+                "INSERT INTO visit_services (visit_id, service_id) VALUES (%s, %s)",
+                [(visit_id, service_ids[title]) for title in titles],
+            )
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Ініціалізація БД салону")
+    parser.add_argument(
+        "--reset", action="store_true", help="видалити таблиці й створити заново"
+    )
+    args = parser.parse_args()
+
     with get_connection() as conn:
+        if args.reset:
+            conn.execute(RESET_SQL)
+            print("Старі таблиці видалено.")
         conn.execute(SCHEMA_FILE.read_text(encoding="utf-8"))
         seed(conn)
         rows = conn.execute(
-            "SELECT 'owners', count(*) FROM owners "
-            "UNION ALL SELECT 'cats', count(*) FROM cats "
-            "UNION ALL SELECT 'groomers', count(*) FROM groomers "
+            "SELECT 'cats', count(*) FROM cats "
             "UNION ALL SELECT 'services', count(*) FROM services "
             "UNION ALL SELECT 'visits', count(*) FROM visits "
             "UNION ALL SELECT 'visit_services', count(*) FROM visit_services"

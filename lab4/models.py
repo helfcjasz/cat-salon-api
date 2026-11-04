@@ -4,6 +4,13 @@ from decimal import Decimal
 
 
 @dataclass
+class Cat:
+    id: int
+    name: str
+    breed: str
+
+
+@dataclass
 class Service:
     id: int
     title: str
@@ -12,36 +19,20 @@ class Service:
 
 
 @dataclass
-class Groomer:
-    id: int
-    full_name: str
-    phone: str
-
-
-@dataclass
-class Cat:
-    id: int
-    owner_id: int
-    name: str
-    breed: str
-    birth_date: date
-    weight: Decimal
-
-
-@dataclass
-class Owner:
-    id: int
-    full_name: str
-    email: str
-    phone: str
-    cats: list[Cat] = field(default_factory=list)
-
-
-@dataclass
 class Visit:
     id: int
-    cat_id: int
-    groomer_id: int
+    cat: Cat
     visit_date: date
-    status: str = "planned"
+    cat_weight: Decimal
+    confirmed: bool
     services: list[Service] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class NewVisit:
+    cat_name: str
+    cat_breed: str
+    services: list[str]
+    visit_date: date
+    cat_weight: Decimal
+    confirmed: bool

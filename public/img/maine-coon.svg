@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Мейн-кун">
+  <rect width="400" height="300" fill="#dcebe5"/>
+  <circle cx="330" cy="60" r="28" fill="#fbf6ee"/>
+  <!-- пухнастий комір -->
+  <ellipse cx="200" cy="235" rx="150" ry="70" fill="#a9754f"/>
+  <ellipse cx="200" cy="215" rx="125" ry="75" fill="#c08e63"/>
+  <!-- вуха з китицями -->
+  <polygon points="105,120 120,30 175,85" fill="#8a5a44"/>
+  <polygon points="295,120 280,30 225,85" fill="#8a5a44"/>
+  <polygon points="122,100 126,52 160,86" fill="#f0b48f"/>
+  <polygon points="278,100 274,52 240,86" fill="#f0b48f"/>
+  <line x1="120" y1="30" x2="116" y2="8" stroke="#5a3a2a" stroke-width="4" stroke-linecap="round"/>
+  <line x1="280" y1="30" x2="284" y2="8" stroke="#5a3a2a" stroke-width="4" stroke-linecap="round"/>
+  <!-- голова -->
+  <ellipse cx="200" cy="145" rx="95" ry="80" fill="#b07c55"/>
+  <!-- смужки табі -->
+  <path d="M200 70 L200 100 M175 75 L182 100 M225 75 L218 100" stroke="#6b4430" stroke-width="6" stroke-linecap="round"/>
+  <!-- мордочка -->
+  <ellipse cx="200" cy="175" rx="48" ry="36" fill="#f1dcc3"/>
+  <!-- очі -->
+  <ellipse cx="165" cy="140" rx="14" ry="17" fill="#f6d26b"/>
+  <ellipse cx="235" cy="140" rx="14" ry="17" fill="#f6d26b"/>
+  <ellipse cx="165" cy="141" rx="5" ry="12" fill="#2b2320"/>
+  <ellipse cx="235" cy="141" rx="5" ry="12" fill="#2b2320"/>
+  <!-- ніс і рот -->
+  <polygon points="190,160 210,160 200,172" fill="#e08a62"/>
+  <path d="M200 172 L200 182 M200 182 Q186 194 174 184 M200 182 Q214 194 226 184" fill="none" stroke="#6b4430" stroke-width="3" stroke-linecap="round"/>
+  <!-- вуса -->
+  <path d="M150 178 L95 168 M150 186 L95 192 M250 178 L305 168 M250 186 L305 192" stroke="#fffdf9" stroke-width="3" stroke-linecap="round"/>
+</svg>

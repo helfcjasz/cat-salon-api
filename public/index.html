@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Мейн-Мур — салон грумінгу для котів</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/app.js" defer></script>
+    </head>
+
+    <body>
+        <header class="header">
+            <h1 class="title">Мейн-Мур — салон грумінгу для котів</h1>
+            <nav class="nav">
+                <a class="nav-link" href="#about">Про салон</a>
+                <a class="nav-link" href="#services">Послуги</a>
+                <a class="nav-link" href="#catalog">Записи</a>
+                <a class="nav-link" href="#add">Записатися</a>
+                <a class="nav-link" href="#faq">Запитання</a>
+                <a class="nav-link" href="#links">Посилання</a>
+            </nav>
+        </header>
+
+        <main class="container main">
+
+            <section class="section about" id="about">
+            <h2 class="section-title">Про салон</h2>
+                <div class="about-grid">
+                    <div class="about-text">
+                        <p class="text">«Мейн-Мур» — це салон грумінгу для котів, де кожен гість стає <strong>головним пухнастиком дня</strong>. Ми працюємо спокійно, без поспіху й без гучних звуків, щоб візит був приємним і для кота, і для його господаря.</p>
+
+                        <h3 class="subtitle">Чому саме мейнкуни?</h3>
+                        <p class="text">Мейн-кун — одна з найбільших порід домашніх котів: з довгою шовковистою шерстю, пухнастим хвостом і китицями на вухах. Така шерсть дуже гарна, але вона <em>потребує регулярного догляду</em>, інакше в ній швидко з'являються ковтуни.</p>
+                        <p class="text">Ми добре знаємо особливості цієї породи, тому для мейнкунів підбираємо окремі гребінці та делікатні засоби. Водночас до нас охоче приходять коти інших порід — усім знайдеться місце на м'якому килимку.</p>
+
+                        <h3 class="subtitle">Як ми працюємо?</h3>
+                        <p class="text">Перед процедурою кіт знайомиться з майстром і спокійно оглядає кімнату. Усі етапи проходять у <mark>комфортному для тварини темпі</mark>, з перервами на відпочинок і ласки.</p>
+                        <p class="text">Після грумінгу кожен відвідувач отримує смаколик, а господар — пораду, як доглядати за шерстю вдома між візитами.</p>
+                    </div>
+
+                    <div class="about-media">
+                        <div class="photo-frame">
+                            <img class="photo" src="img/3.jpg" alt="незадоволений кіт1">
+                        </div>
+
+                        <figure class="figure">
+                            <div class="photo-frame">
+                                <img class="photo" src="img/4.jpg" alt="незадоволений кіт2">
+                            </div>
+                            <figcaption class="caption">Наші клієнти</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </section>
+
+            <div class="sections">
+                <section class="section" id="services">
+                    <h2 class="section-title">Послуги</h2>
+                    <ul class="list">
+                        <li>Купання та сушіння делікатними засобами</li>
+                        <li>Вичісування та видалення ковтунів</li>
+                        <li>Гігієнічна стрижка</li>
+                        <li>Догляд за кігтиками, вушками та очима</li>
+                    </ul>
+                </section>
+
+                <section class="section" id="steps">
+                    <h2 class="section-title">Як проходить візит</h2>
+                        <ol class="list">
+                            <li>Знайомство кота з майстром</li>
+                            <li>Огляд шерсті та шкіри</li>
+                            <li>Купання або вичісування</li>
+                            <li>Сушіння та фінальний догляд</li>
+                        </ol>
+                </section>
+
+                <section class="section" id="faq">
+                    <h2 class="section-title">Часті запитання</h2>
+                    <details class="faq-item">
+                        <summary class="faq-question">Скільки триває візит?</summary>
+                        <p class="faq-answer">Від 40 хвилин до 2 годин залежно від довжини шерсті та обраної послуги.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Чи можна приходити з кошеням?</summary>
+                        <p class="faq-answer">Так, але купати кошенят можна <mark>з 3 місяців</mark>, після першої вакцинації.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Як часто потрібно вичісувати мейнкуна?</summary>
+                        <p class="faq-answer">Для довгошерстих котів — <strong>щонайменше раз на тиждень</strong>, а під час линьки частіше.</p>
+                    </details>
+                </section>
+            </div>
+
+            <section class="section" id="catalog">
+                <h2 class="section-title">Записи на грумінг</h2>
+                <div class="table-wrapper">
+                    <table class="table">
+                        <caption class="table-caption">Найближчі візити</caption>
+                        <thead>
+                            <tr>
+                                <th>Кличка</th>
+                                <th>Порода</th>
+                                <th>Послуга</th>
+                                <th>Дата візиту</th>
+                                <th>Вага, кг</th>
+                                <th>Підтверджено</th>
+                                <th>Видалити</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visit-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="section" id="add">
+                <h2 class="section-title">Записатися на грумінг</h2>
+                <form class="form" id="visit-form">
+                    <div class="form-grid">
+                        <div class="form-field" id="catName">
+                            <label class="form-label" for="name">Кличка</label>
+                            <input class="form-input" type="text" id="name" name="name" placeholder="Введіть кличку...">
+                        </div>
+
+                        <div class="form-field" id="catBreed">
+                            <label class="form-label" for="breed">Порода</label>
+                            <input class="form-input" type="text" id="breed" name="breed" placeholder="Введіть породу...">
+                        </div>
+
+                        <div class="form-field" id="serviceType">
+                            <label class="form-label" for="service">Послуга</label>
+                            <select class="form-input" id="service" name="service">
+                                <option>Купання та сушіння</option>
+                                <option>Вичісування</option>
+                                <option>Гігієнічна стрижка</option>
+                                <option>Догляд за кігтиками та вушками</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field" id="serviceDate">
+                            <label class="form-label" for="visit">Дата візиту</label>
+                            <input class="form-input" type="date" id="visit" name="visit">
+                        </div>
+
+                        <div class="form-field" id="catMass">
+                            <label class="form-label" for="weight">Вага, кг</label>
+                            <input class="form-input" type="number" id="weight" name="weight" min="1" max="20" step="0.1">
+                        </div>
+
+                        <div class="form-field form-check" id="confirmation">
+                            <input class="form-checkbox" type="checkbox" id="confirmed" name="confirmed">
+                            <label class="form-label" for="confirmed">Підтверджено</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">Записати</button>
+                </form>
+                <p id="message"></p>
+            </section>
+
+            <section class="section" id="links">
+                <h2 class="section-title">Корисні посилання</h2>
+                <ul class="list">
+                    <li><a class="link" href="https://uk.wikipedia.org/wiki/Мейн-кун" target="_blank">Мейн-кун у Вікіпедії</a></li>
+                    <li><a class="link" href="https://cfa.org" target="_blank">CFA — асоціація любителів котів</a></li>
+                    <li><a class="link" href="https://fifeweb.org" target="_blank">FIFe — міжнародна федерація котів</a></li>
+                </ul>
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <address class="address">Салон грумінгу «Мейн-Мур», м. Львів</address>
+            <p class="footer-text">Мейн-Мур, 2026</p>
+        </footer>
+    </body>
+</html>

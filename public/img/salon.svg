@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Кіт у ванні з бульбашками">
+  <rect width="400" height="300" fill="#fbe9dc"/>
+  <!-- кіт у ванні -->
+  <ellipse cx="200" cy="140" rx="70" ry="62" fill="#c9a37e"/>
+  <polygon points="145,105 150,55 190,90" fill="#a9825e"/>
+  <polygon points="255,105 250,55 210,90" fill="#a9825e"/>
+  <polygon points="153,92 155,70 177,88" fill="#f0b48f"/>
+  <polygon points="247,92 245,70 223,88" fill="#f0b48f"/>
+  <ellipse cx="177" cy="135" rx="9" ry="11" fill="#fffdf9"/>
+  <ellipse cx="223" cy="135" rx="9" ry="11" fill="#fffdf9"/>
+  <circle cx="177" cy="137" r="5" fill="#2b2320"/>
+  <circle cx="223" cy="137" r="5" fill="#2b2320"/>
+  <polygon points="193,155 207,155 200,163" fill="#e08a62"/>
+  <path d="M200 163 Q190 172 182 165 M200 163 Q210 172 218 165" fill="none" stroke="#6b4430" stroke-width="3" stroke-linecap="round"/>
+  <!-- піна -->
+  <circle cx="140" cy="190" r="26" fill="#ffffff"/>
+  <circle cx="175" cy="182" r="30" fill="#ffffff"/>
+  <circle cx="215" cy="184" r="28" fill="#ffffff"/>
+  <circle cx="255" cy="190" r="26" fill="#ffffff"/>
+  <!-- ванна -->
+  <path d="M70 190 H330 V215 Q330 270 275 270 H125 Q70 270 70 215 Z" fill="#5f857b"/>
+  <rect x="60" y="182" width="280" height="14" rx="7" fill="#7aa398"/>
+  <rect x="105" y="268" width="14" height="16" fill="#3f6f64"/>
+  <rect x="281" y="268" width="14" height="16" fill="#3f6f64"/>
+  <!-- бульбашки -->
+  <circle cx="90" cy="110" r="14" fill="none" stroke="#7aa398" stroke-width="3"/>
+  <circle cx="318" cy="90" r="18" fill="none" stroke="#7aa398" stroke-width="3"/>
+  <circle cx="300" cy="140" r="9" fill="none" stroke="#7aa398" stroke-width="3"/>
+  <circle cx="112" cy="70" r="8" fill="none" stroke="#7aa398" stroke-width="3"/>
+</svg>
