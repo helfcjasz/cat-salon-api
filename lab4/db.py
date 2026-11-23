@@ -1,5 +1,4 @@
 import os
-
 import psycopg
 
 DSN = os.environ.get(
@@ -9,5 +8,6 @@ DSN = os.environ.get(
 
 
 def get_connection() -> psycopg.Connection:
-    """Повертає нове з'єднання з БД."""
     return psycopg.connect(DSN)
+
+

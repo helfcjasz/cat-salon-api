@@ -1,9 +1,9 @@
+
 import argparse
 from datetime import date, timedelta
 from pathlib import Path
 
 import psycopg
-
 from lab4.db import get_connection
 
 SCHEMA_FILE = Path(__file__).with_name("schema.sql")
@@ -13,7 +13,6 @@ RESET_SQL = (
     "groomers, owners, services CASCADE"
 )
 
-
 SERVICES = [
     ("Купання та сушіння", 450, 50),
     ("Вичісування", 350, 40),
@@ -22,6 +21,7 @@ SERVICES = [
     ("Видалення ковтунів", 400, 45),
     ("SPA-догляд за шерстю", 700, 75),
 ]
+
 
 CATS = [
     ("Ніка", "сіамська кішка", 5.5),
@@ -43,10 +43,10 @@ CATS = [
 
 
 def build_visits() -> list[tuple[int, date, float, bool, list[str]]]:
-
+    
     titles = [title for title, _, _ in SERVICES]
     visits = [
-        # Перші п'ять візитів із server.js сайту.
+        
         (1, date(2026, 11, 6), 5.5, False, ["Вичісування"]),
         (2, date(2026, 11, 3), 3.4, True, ["Купання та сушіння"]),
         (3, date(2026, 11, 1), 3.1, True, ["Вичісування"]),
@@ -75,7 +75,7 @@ def _insert(cur: psycopg.Cursor, sql: str, params: tuple) -> int:
 
 
 def seed(conn: psycopg.Connection) -> None:
-
+    
     with conn.cursor() as cur:
         row = cur.execute("SELECT count(*) FROM visits").fetchone()
         if row is not None and row[0] > 0:

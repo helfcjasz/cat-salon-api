@@ -53,7 +53,6 @@ def _service_ids(conn: psycopg.Connection, titles: list[str]) -> list[int]:
 
 
 def _cat_id(conn: psycopg.Connection, name: str, breed: str) -> int:
-    """Знаходить кота за кличкою та породою або створює нового."""
     row = conn.execute(
         "INSERT INTO cats (name, breed) VALUES (%s, %s) "
         "ON CONFLICT (name, breed) DO UPDATE SET name = EXCLUDED.name "
