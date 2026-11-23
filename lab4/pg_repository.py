@@ -50,7 +50,7 @@ def _service_ids(conn: psycopg.Connection, names: list[str]) -> list[int]:
         "SELECT id, name FROM services WHERE name = ANY(%s)", (names,)
     ).fetchall()
     found = {name: service_id for service_id, name in rows}
-    missing = [name for name in names if names not in found]
+    missing = [name for name in names if name not in found]
     if missing:
         raise ServiceNotFoundError(missing)
     return [found[name] for name in names]

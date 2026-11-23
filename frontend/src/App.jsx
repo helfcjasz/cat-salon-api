@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
 import Header from './components/Header.jsx';
 import VisitTable from './components/VisitTable.jsx';
-import { useState } from 'react';
 import VisitForm from './components/VisitForm.jsx';
 import './css/style.css';
 import Footer from './components/Footer.jsx'
@@ -9,37 +9,64 @@ import About from './components/About.jsx';
 import Info from './components/Info.jsx';
 
 
-const initialVisits = [
-  { id: 1, catName: 'Ніка', catBreed: 'сіамська кішка', serviceType: 'Вичісування',
-    serviceDate: '2026-11-06', serviceTime: '12:00', catMass: 5.5, agr_confirmation: false },
-  { id: 2, catName: 'Мія', catBreed: 'метис', serviceType: 'Купання та сушіння',
-    serviceDate: '2026-11-03', serviceTime: '13:00', catMass: 3.4, agr_confirmation: true },
-  { id: 3, catName: 'Люся', catBreed: 'сибірська', serviceType: 'Вичісування',
-    serviceDate: '2026-11-01', serviceTime: '10:00', catMass: 3.1, agr_confirmation: true },
-  { id: 4, catName: 'Йосип', catBreed: 'метис', serviceType: 'Догляд за кігтиками та вушками',
-    serviceDate: '2026-11-05', serviceTime: '11:00', catMass: 5.2, agr_confirmation: true },
-  { id: 5, catName: 'Марсік', catBreed: 'британський короткошерстий', serviceType: 'Гігієнічна стрижка',
-    serviceDate: '2026-11-20', serviceTime: '15:00', catMass: 4.8, agr_confirmation: true }
-];
-
+const API_URL = '/api/items';
 
 
 function App() {
-  const [visits, setVisits] = useState(initialVisits);
+  const [visits, setVisits] = useState([]);
+  const [apiError, setApiError] = useState('');
+
+  useEffect(() => {
+    async function loadVisits() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) {
+          throw new Error('Не вдалося завантажити записи з сервера');
+        }
+        const data = await res.json();
+        setVisits(data);
+      } catch (err) {
+        setApiError(err.message);
+      }
+    }
+    loadVisits();
+  }, []);
 
 
-  function addVisit(visit) {
-    const newVisit = {
-      ...visit,
-      id: Date.now(),
-      catMass: Number(visit.catMass)
-    };
-    setVisits([...visits, newVisit]);
+  async function addVisit(visit) {
+    setApiError('');
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...visit,
+          catMass: Number(visit.catMass),
+        }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Помилка при збереженні запису');
+      }
+      const created = await res.json();
+      setVisits((prev) => [...prev, created]);
+    } catch (err) {
+      setApiError(err.message);
+    }
   }
 
 
-  function deleteVisit(id) {
-    setVisits(visits.filter(visit => visit.id !== id));
+  async function deleteVisit(id) {
+    setApiError('');
+    try{
+      const res = await fetch(`${API_URL}/${id}`, {method: 'DELETE'});
+      if(!res.ok){
+        throw new Error('');
+      }
+      setVisits((prev) => prev.filter((visit) => visit.id !== id));
+    } catch (err){
+      setApiError(err.message);
+    }
   }
 
   
@@ -52,7 +79,12 @@ function App() {
     <div className="container">
       <About />
       <Info />
-      {visits.length === 0 ? <h2 className = "section section-title empty-table" >Записів немає</h2> : <VisitTable visits={visits} onDelete={deleteVisit} />}
+      {apiError && <p className="error">{apiError}</p>}
+        {visits.length === 0 ? (
+          <h2 className="section section-title empty-table">Записів немає</h2>
+        ) : (
+          <VisitTable visits={visits} onDelete={deleteVisit} />
+        )}
       <VisitForm onAdd={addVisit} visits={visits}/>
       <Links />  
     </div>
