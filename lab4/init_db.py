@@ -1,5 +1,5 @@
 import argparse
-from datetime import date, timedelta
+from datetime import date, time, timedelta
 from pathlib import Path
 
 import psycopg
@@ -9,58 +9,59 @@ from lab4.db import get_connection
 SCHEMA_FILE = Path(__file__).with_name("schema.sql")
 
 RESET_SQL = (
-    "DROP TABLE IF EXISTS visit_services, visits, cats, "
-    "groomers, owners, services CASCADE"
+    "DROP TABLE IF EXISTS visit_services, visits, cats, services CASCADE"
 )
 
 SERVICES = [
-    ("Купання та сушіння", 450, 50),
-    ("Вичісування", 350, 40),
-    ("Гігієнічна стрижка", 600, 60),
-    ("Догляд за кігтиками та вушками", 250, 30),
-    ("Видалення ковтунів", 400, 45),
-    ("SPA-догляд за шерстю", 700, 75),
+    "Купання та сушіння",
+    "Вичісування",
+    "Гігієнічна стрижка",
+    "Догляд за кігтиками та вушками",
+    "Масаж лапок"
 ]
 
 
 CATS = [
-    ("Ніка", "сіамська кішка", 5.5),
-    ("Мія", "метис", 3.4),
-    ("Люся", "сибірська", 3.1),
-    ("Йосип", "метис", 5.2),
-    ("Марсік", "британський короткошерстий", 4.8),
-    ("Барсик", "мейнкун", 7.8),
-    ("Симба", "мейнкун", 8.4),
-    ("Багіра", "мейнкун", 6.2),
-    ("Леопольд", "мейнкун", 9.1),
-    ("Рижик", "мейнкун", 7.0),
-    ("Боніфацій", "мейнкун", 8.8),
-    ("Маркіза", "мейнкун", 5.9),
-    ("Цезар", "мейнкун", 9.4),
-    ("Гектор", "мейнкун", 8.1),
-    ("Зефір", "мейнкун", 6.6),
+    ("Ніка", "сіамська кішка", 5.5, False),
+    ("Мія", "метис", 3.4, True),
+    ("Люся", "сибірська", 3.1, False),
+    ("Йосип", "метис", 5.2, False),
+    ("Марсік", "британський короткошерстий", 4.8, True),
+    ("Боня", "метис", 3.1, False),
+    ("Бідон", "мейн-кун", 10.2, False),
+    ("Барсік", "мейнкун", 7.8, True),
+    ("Петрик", "мейнкун", 8.4, False),
+    ("Богдан", "сфінкс", 6.2, True),
+    ("Леопольд", "мейнкун", 9.1, False),
+    ("Гертруда", "мейнкун", 7.0, False),
+    ("Боніфацій", "мейнкун", 8.8, False),
+    ("Маркіза", "мейнкун", 5.9, True),
+    ("Цезар", "мейнкун", 9.4, False),
+    ("Гектор", "мейнкун", 8.1, True),
+    ("Зефір", "мейнкун", 6.6, False),
+
 ]
 
 
-def build_visits() -> list[tuple[int, date, float, bool, list[str]]]:
-
-    titles = [title for title, _, _ in SERVICES]
-    visits = [
-        (1, date(2026, 11, 6), 5.5, False, ["Вичісування"]),
-        (2, date(2026, 11, 3), 3.4, True, ["Купання та сушіння"]),
-        (3, date(2026, 11, 1), 3.1, True, ["Вичісування"]),
-        (4, date(2026, 11, 5), 5.2, True, ["Догляд за кігтиками та вушками"]),
-        (5, date(2026, 11, 20), 4.8, True, ["Гігієнічна стрижка"]),
+def build_visits() -> list[tuple[int, date, time, list[str]]]:
+    visits: list[tuple[int, date, time, list[str]]] = [
+        (1, date(2026, 11, 25), time(10, 0), ["Вичісування"]),
+        (2, date(2026, 11, 25), time(12, 0), ["Купання та сушіння"]),
+        (3, date(2026, 11, 26), time(11, 0), ["Вичісування"]),
+        (4, date(2026, 11, 26), time(14, 0), ["Догляд за кігтиками та вушками"]),
+        (5, date(2026, 11, 27), time(15, 0), ["Гігієнічна стрижка"]),
     ]
     for number in range(6, 26):
         cat_index = (number - 1) % len(CATS)
-        chosen = list(dict.fromkeys([titles[number % 6], titles[(number * 5) % 6]]))
+        chosen = list(
+            dict.fromkeys([SERVICES[number % len(SERVICES)], SERVICES[(number + 2) % len(SERVICES)]])
+        )
+        visit_hour = 10 + (number % 7)  
         visits.append(
             (
                 cat_index + 1,
-                date(2026, 10, 1) + timedelta(days=3 * number),
-                CATS[cat_index][2],
-                number % 3 != 0,
+                date(2026, 11, 20) + timedelta(days=number),
+                time(visit_hour, 0),
                 chosen,
             )
         )
@@ -74,7 +75,7 @@ def _insert(cur: psycopg.Cursor, sql: str, params: tuple) -> int:
 
 
 def seed(conn: psycopg.Connection) -> None:
-
+    
     with conn.cursor() as cur:
         row = cur.execute("SELECT count(*) FROM visits").fetchone()
         if row is not None and row[0] > 0:
@@ -82,39 +83,39 @@ def seed(conn: psycopg.Connection) -> None:
             return
 
         service_ids = {
-            title: _insert(
+            name: _insert(
                 cur,
-                "INSERT INTO services (title, price, duration_min) "
-                "VALUES (%s, %s, %s) RETURNING id",
-                (title, price, minutes),
+                "INSERT INTO services (name) "
+                "VALUES (%s) RETURNING id",
+                (name,),
             )
-            for title, price, minutes in SERVICES
+            for name in SERVICES
         }
         cat_ids = [
             _insert(
                 cur,
-                "INSERT INTO cats (name, breed) VALUES (%s, %s) RETURNING id",
-                (name, breed),
+                "INSERT INTO cats (name, breed, weight, is_aggressive) VALUES (%s, %s, %s, %s) RETURNING id",
+                (name, breed, weight, is_aggressive),
             )
-            for name, breed, _ in CATS
+            for name, breed, weight, is_aggressive in CATS
         ]
-        for cat_number, visit_date, weight, confirmed, titles in build_visits():
+        for cat_number, service_date, service_time , names in build_visits():
             visit_id = _insert(
                 cur,
-                "INSERT INTO visits (cat_id, visit_date, cat_weight, confirmed) "
-                "VALUES (%s, %s, %s, %s) RETURNING id",
-                (cat_ids[cat_number - 1], visit_date, weight, confirmed),
+                "INSERT INTO visits (cat_id, service_date, service_time) "
+                "VALUES (%s, %s, %s) RETURNING id",
+                (cat_ids[cat_number - 1], service_date, service_time),
             )
             cur.executemany(
                 "INSERT INTO visit_services (visit_id, service_id) VALUES (%s, %s)",
-                [(visit_id, service_ids[title]) for title in titles],
+                [(visit_id, service_ids[name]) for name in names],
             )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Ініціалізація БД салону")
     parser.add_argument(
-        "--reset", action="store_true", help="видалити таблиці й створити заново"
+        "--reset", action="store_true", help="видалити таблиці й створити ще раз"
     )
     args = parser.parse_args()
 

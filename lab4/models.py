@@ -36,4 +36,3 @@ class NewVisit:
     services: list[str]
     service_date: date
     service_time: time
-
