@@ -497,3 +497,25 @@ input[type="checkbox"],
 .faq-question{
     cursor: url('../img/cursor-pointer.png'), pointer;
 }
+
+.empty-table{
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+.form-hint {
+    display: block;
+    font-size: 0.85em;
+    color: #666; 
+    margin-top: 5px;
+    font-style: italic;
+}
+
+
+.error {
+    grid-column: 1 / -1; 
+    text-align: left; 
+    margin-bottom: 10px; 
+    font-size: 0.9em; 
+}
