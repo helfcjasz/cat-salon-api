@@ -10,7 +10,7 @@ from lab4.items_api import router as items_router
 
 ROUTERS = [items_router]
 
-PUBLIC_DIR = Path(__file__).resolve().parent.parent / "public"
+PUBLIC_DIR = Path(__file__).resolve().parent.parent / "frontend/dist"
 
 app = FastAPI(title="Cat Salon API")
 

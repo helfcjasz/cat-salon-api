@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, time
 from decimal import Decimal
 
 
@@ -8,23 +8,22 @@ class Cat:
     id: int
     name: str
     breed: str
+    weight: Decimal
+    is_agressive: bool = False
 
 
 @dataclass
 class Service:
     id: int
-    title: str
-    price: Decimal
-    duration_min: int
+    name: str
 
 
 @dataclass
 class Visit:
     id: int
     cat: Cat
-    visit_date: date
-    cat_weight: Decimal
-    confirmed: bool
+    service_date: date
+    service_time: time
     services: list[Service] = field(default_factory=list)
 
 
@@ -32,7 +31,9 @@ class Visit:
 class NewVisit:
     cat_name: str
     cat_breed: str
-    services: list[str]
-    visit_date: date
     cat_weight: Decimal
-    confirmed: bool
+    is_agressive: bool
+    services: list[str]
+    service_date: date
+    service_time: time
+
