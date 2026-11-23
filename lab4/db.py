@@ -1,4 +1,5 @@
 import os
+
 import psycopg
 
 DSN = os.environ.get(
@@ -9,5 +10,3 @@ DSN = os.environ.get(
 
 def get_connection() -> psycopg.Connection:
     return psycopg.connect(DSN)
-
-

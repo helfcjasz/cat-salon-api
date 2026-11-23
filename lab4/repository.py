@@ -4,7 +4,6 @@ from lab4.models import NewVisit, Visit
 
 
 class ServiceNotFoundError(Exception):
-
     def __init__(self, titles: list[str]) -> None:
         super().__init__(", ".join(titles))
         self.titles = titles
