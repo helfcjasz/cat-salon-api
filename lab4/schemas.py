@@ -1,4 +1,6 @@
-from datetime import date
+from __future__ import annotations
+
+from datetime import date, time
 from decimal import Decimal
 
 from pydantic import BaseModel, Field
@@ -6,7 +8,6 @@ from pydantic import BaseModel, Field
 from lab4.models import NewVisit, Visit
 
 NAME_PATTERN = r"^[^\W\d_](?:[^\W\d_]|[' -]){0,49}$"
-
 SERVICES_PATTERN = r"^[^\W\d_](?:[^\W\d_]|[ ,'-]){0,199}$"
 
 
@@ -15,19 +16,21 @@ class ItemIn(BaseModel):
     catBreed: str = Field(pattern=NAME_PATTERN)
     serviceType: str = Field(pattern=SERVICES_PATTERN)
     serviceDate: date
+    serviceTime: time
     catMass: float = Field(ge=1, le=20)
-    confirmation: bool = False
+    agr_confirmation: bool = False
 
     def to_new_visit(self) -> NewVisit:
         parts = (part.strip() for part in self.serviceType.split(","))
-        titles = list(dict.fromkeys(part for part in parts if part))
+        names = list(dict.fromkeys(part for part in parts if part))
         return NewVisit(
             cat_name=self.catName.strip(),
             cat_breed=self.catBreed.strip(),
-            services=titles,
-            visit_date=self.serviceDate,
             cat_weight=Decimal(str(self.catMass)),
-            confirmed=self.confirmation,
+            is_aggressive=self.agr_confirmation,
+            services=names,
+            service_date=self.serviceDate,
+            service_time=self.serviceTime,
         )
 
 
@@ -37,8 +40,9 @@ class ItemOut(BaseModel):
     catBreed: str
     serviceType: str
     serviceDate: date
+    serviceTime: str
     catMass: float
-    confirmation: bool
+    agr_confirmation: bool
 
     @classmethod
     def from_visit(cls, visit: Visit) -> ItemOut:
@@ -46,8 +50,9 @@ class ItemOut(BaseModel):
             id=visit.id,
             catName=visit.cat.name,
             catBreed=visit.cat.breed,
-            serviceType=", ".join(service.title for service in visit.services),
-            serviceDate=visit.visit_date,
-            catMass=float(visit.cat_weight),
-            confirmation=visit.confirmed,
+            serviceType=", ".join(service.name for service in visit.services),
+            serviceDate=visit.service_date,
+            serviceTime=visit.service_time.strftime("%H:%M"),
+            catMass=float(visit.cat.weight),
+            agr_confirmation=visit.cat.is_agressive,
         )

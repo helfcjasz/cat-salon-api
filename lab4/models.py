@@ -32,7 +32,7 @@ class NewVisit:
     cat_name: str
     cat_breed: str
     cat_weight: Decimal
-    is_agressive: bool
+    is_aggressive: bool
     services: list[str]
     service_date: date
     service_time: time

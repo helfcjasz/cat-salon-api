@@ -8,16 +8,14 @@ from lab4.db import get_connection
 
 SCHEMA_FILE = Path(__file__).with_name("schema.sql")
 
-RESET_SQL = (
-    "DROP TABLE IF EXISTS visit_services, visits, cats, services CASCADE"
-)
+RESET_SQL = "DROP TABLE IF EXISTS visit_services, visits, cats, services CASCADE"
 
 SERVICES = [
     "Купання та сушіння",
     "Вичісування",
     "Гігієнічна стрижка",
     "Догляд за кігтиками та вушками",
-    "Масаж лапок"
+    "Масаж лапок",
 ]
 
 
@@ -39,7 +37,6 @@ CATS = [
     ("Цезар", "мейнкун", 9.4, False),
     ("Гектор", "мейнкун", 8.1, True),
     ("Зефір", "мейнкун", 6.6, False),
-
 ]
 
 
@@ -54,9 +51,14 @@ def build_visits() -> list[tuple[int, date, time, list[str]]]:
     for number in range(6, 26):
         cat_index = (number - 1) % len(CATS)
         chosen = list(
-            dict.fromkeys([SERVICES[number % len(SERVICES)], SERVICES[(number + 2) % len(SERVICES)]])
+            dict.fromkeys(
+                [
+                    SERVICES[number % len(SERVICES)],
+                    SERVICES[(number + 2) % len(SERVICES)],
+                ]
+            )
         )
-        visit_hour = 10 + (number % 7)  
+        visit_hour = 10 + (number % 7)
         visits.append(
             (
                 cat_index + 1,
@@ -75,7 +77,7 @@ def _insert(cur: psycopg.Cursor, sql: str, params: tuple) -> int:
 
 
 def seed(conn: psycopg.Connection) -> None:
-    
+
     with conn.cursor() as cur:
         row = cur.execute("SELECT count(*) FROM visits").fetchone()
         if row is not None and row[0] > 0:
@@ -85,8 +87,7 @@ def seed(conn: psycopg.Connection) -> None:
         service_ids = {
             name: _insert(
                 cur,
-                "INSERT INTO services (name) "
-                "VALUES (%s) RETURNING id",
+                "INSERT INTO services (name) VALUES (%s) RETURNING id",
                 (name,),
             )
             for name in SERVICES
@@ -99,7 +100,7 @@ def seed(conn: psycopg.Connection) -> None:
             )
             for name, breed, weight, is_aggressive in CATS
         ]
-        for cat_number, service_date, service_time , names in build_visits():
+        for cat_number, service_date, service_time, names in build_visits():
             visit_id = _insert(
                 cur,
                 "INSERT INTO visits (cat_id, service_date, service_time) "
